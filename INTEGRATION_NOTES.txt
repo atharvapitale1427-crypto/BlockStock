@@ -1,0 +1,23 @@
+BLOCKSTOCK UPDATE V3 — WALLET, PROCUREMENT FLOW, PRINT & AUDIT ANCHORS
+
+CHANGES
+- Wallet button changes to “Wallet connected · 0x1234…abcd” after connecting and resets on account/network change.
+- Creating a PO asks BridgeKey to anchor the PO fingerprint on MST Testnet.
+- Accepted PO receipts/invoices anchor a receipt fingerprint after the receipt is matched and stock is updated.
+- Payments marked “Paid / verified externally” ask BridgeKey to anchor the payment record fingerprint.
+- PO details and supplier-payment details include a “Print full receipt” action. The print view combines PO, invoice/receipt lines, payment references, fingerprints and available blockchain transaction hashes.
+
+IMPORTANT SEMANTICS
+- The currently deployed Solidity contract only exposes recordMovement(). To avoid pretending new Solidity functions exist, PO and payment fingerprints are written as typed AUDIT:PO and AUDIT:PAYMENT marker records using the existing function. These are audit anchors, not actual payment transfers or new native PO/payment contract objects.
+- Stock receipts are anchored as AUDIT:RECEIPT markers; the existing approved stock movement path still records movement entries.
+- A wallet connection is not proof of a successful transaction. Confirm a transaction hash and successful receipt on https://testnet.mstscan.com.
+- Contract has onlyOwner. The connected BridgeKey account must be the contract deployer or calls revert.
+- PO, receipt, and payment business records currently persist in this browser's localStorage, not in dedicated backend database tables. Keep an exported/printed receipt and use Backend Mode for movement records. This update does not claim full multi-user backend persistence.
+- Supplier payment status “Paid / verified externally” is an accounting record only. No money is sent by this website.
+
+INSTALL
+1. Back up your existing project folder.
+2. Extract this ZIP into a new folder and open blockStock/index.html in VS Code.
+3. Start backend from blockStock/backend: python -m pip install -r requirements.txt ; python app.py
+4. Run index.html with Live Server; configure API base http://127.0.0.1:5000, contract address and explorer in Settings.
+5. Connect BridgeKey on MST Testnet. Test with non-sensitive sample data and confirm each wallet prompt before approving.
